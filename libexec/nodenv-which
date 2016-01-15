@@ -23,7 +23,8 @@ remove_from_path() {
     path_before="$result"
     result="${result//:$path_to_remove:/:}"
   done
-  echo "${result%:}"
+  result="${result%:}"
+  echo "${result#:}"
 }
 
 NODENV_COMMAND="$1"
@@ -51,7 +52,7 @@ done
 
 if [ -x "$NODENV_COMMAND_PATH" ]; then
   echo "$NODENV_COMMAND_PATH"
-elif ! [ -d "${NODENV_ROOT}/versions/${NODENV_VERSION}" ]; then
+elif [ "$NODENV_VERSION" != "system" ] && [ ! -d "${NODENV_ROOT}/versions/${NODENV_VERSION}" ]; then
   echo "nodenv: version \`$NODENV_VERSION' is not installed (set by $(nodenv-version-origin))" >&2
   exit 1
 else

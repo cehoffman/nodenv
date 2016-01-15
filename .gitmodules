@@ -1,3 +1,6 @@
 [submodule "plugins/node-build"]
 	path = plugins/node-build
 	url = https://github.com/OiNutter/node-build
+[submodule "test/helpers/assertions"]
+	path = test/helpers/assertions
+	url = https://github.com/jasonkarns/bats-assert

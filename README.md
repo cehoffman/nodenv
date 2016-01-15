@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/OiNutter/nodenv.svg?branch=master)](https://travis-ci.org/OiNutter/nodenv)
+
 # Groom your app’s Node environment with nodenv.
 
 Use nodenv to pick a Node version for your application and guarantee
@@ -35,11 +37,11 @@ bulletproof deployments.
   * [Locating the Node Installation](#locating-the-node-installation)
 * [Installation](#installation)
   * [Basic GitHub Checkout](#basic-github-checkout)
-    * [Upgrading](#upgrading)
   * [Homebrew on Mac OS X](#homebrew-on-mac-os-x)
+  * [Upgrading](#upgrading)
   * [How nodenv hooks into your shell](#how-nodenv-hooks-into-your-shell)
-  * [Installing Node Versions](#installing-node-versions)
-  * [Uninstalling Node Versions](#uninstalling-node-versions)
+  * [Installing Node versions](#installing-node-versions)
+  * [Uninstalling Node versions](#uninstalling-node-versions)
   * [Uninstalling nodenv](#uninstalling-nodenv)
 * [Command Reference](#command-reference)
   * [nodenv local](#nodenv-local)
@@ -52,6 +54,7 @@ bulletproof deployments.
   * [nodenv whence](#nodenv-whence)
 * [Environment variables](#environment-variables)
 * [Development](#development)
+* [Credits](#credits)
 
 ## How It Works
 
@@ -152,6 +155,13 @@ easy to fork and contribute any changes back upstream.
     $ git clone https://github.com/OiNutter/nodenv.git ~/.nodenv
     ~~~
 
+    Optionally, try to compile dynamic bash extension to speed up nodenv. Don't
+    worry if it fails; nodenv will still work normally:
+
+    ~~~
+    $ cd ~/.nodenv && src/configure && make -C src
+    ~~~
+
 2. Add `~/.nodenv/bin` to your `$PATH` for access to the `nodenv`
    command-line utility.
 
@@ -183,7 +193,25 @@ easy to fork and contribute any changes back upstream.
    `nodenv install` command that simplifies the process of
    [installing new Node versions](#installing-node-versions).
 
-#### Upgrading
+### Homebrew on Mac OS X
+
+As an alternative to installation via GitHub checkout, you can install
+nodenv and [node-build][] using the [Homebrew](http://brew.sh) package
+manager on Mac OS X:
+
+~~~
+$ brew update
+$ brew install nodenv
+~~~
+
+**Note:** node-build is installed with nodenv by default. To skip
+node-build, pass `--without-node-build`.
+
+Afterwards you'll still need to add `eval "$(nodenv init -)"` to your
+profile as stated in the caveats. You'll only ever have to do this
+once.
+
+### Upgrading
 
 If you've installed nodenv manually using git, you can upgrade your
 installation to the cutting-edge version at any time.
@@ -201,35 +229,20 @@ $ git fetch
 $ git checkout v0.3.0
 ~~~
 
+Alternatively, check out the [nodenv-update][] plugin which provides a
+command to update nodenv as well as all installed plugins.
+
+~~~ sh
+$ nodenv update
+~~~
+
 If you've [installed via Homebrew](#homebrew-on-mac-os-x), then upgrade
 via its `brew` command:
 
 ~~~ sh
 $ brew update
-$ brew upgrade jawshooah/nodenv/nodenv
-$ brew reinstall --HEAD node-build
+$ brew upgrade nodenv node-build
 ~~~
-
-### Homebrew on Mac OS X
-
-Please note that at this time, the `nodenv` package in Homebrew's main
-repository is *NOT* this package. This package must be installed using the
-instructions below.
-
-As an alternative to installation via GitHub checkout, you can install
-nodenv and [node-build][] using the [Homebrew](http://brew.sh) package
-manager on Mac OS X:
-
-~~~
-$ brew update
-$ brew tap jawshooah/nodenv
-$ brew install jawshooah/nodenv/nodenv
-$ brew install --HEAD node-build
-~~~
-
-Afterwards you'll still need to add `eval "$(nodenv init -)"` to your
-profile as stated in the caveats. You'll only ever have to do this
-once.
 
 ### How nodenv hooks into your shell
 
@@ -262,7 +275,7 @@ extra commands into your shell. Here's what `nodenv init` actually does:
 Run `nodenv init -` for yourself to see exactly what happens under the
 hood.
 
-### Installing Node Versions
+### Installing Node versions
 
 The `nodenv install` command doesn't ship with nodenv out of the box, but is
 provided by the [node-build][] project. If you installed it as part of GitHub
@@ -282,7 +295,7 @@ that directory can also be a symlink to a Node version installed
 elsewhere on the filesystem. nodenv doesn't care; it will simply treat
 any entry in the `versions/` directory as a separate Node version.
 
-### Uninstalling Node Versions
+### Uninstalling Node versions
 
 As time goes on, Node versions you install will accumulate in your
 `~/.nodenv/versions` directory.
@@ -338,11 +351,6 @@ When run without a version number, `nodenv local` reports the currently
 configured local version. You can also unset the local version:
 
     $ nodenv local --unset
-
-Previous versions of nodenv stored local version specifications in a
-file named `.nodenv-version`. For backwards compatibility, nodenv will
-read a local version specified in an `.nodenv-version` file, but a
-`.node-version` file in the same directory will take precedence.
 
 ### nodenv global
 
@@ -450,8 +458,9 @@ tracker](https://github.com/OiNutter/nodenv/issues).
 
 ### Credits
 
-Copied from [rbenv](https://github.com/sstephenson/rbenv) and modified to work for node.
+Copied from [rbenv](https://github.com/rbenv/rbenv) and modified to work for node.
 
 
   [node-build]: https://github.com/OiNutter/node-build#readme
-  [hooks]: https://github.com/sstephenson/rbenv/wiki/Authoring-plugins#rbenv-hooks
+  [hooks]: https://github.com/rbenv/rbenv/wiki/Authoring-plugins#rbenv-hooks
+  [nodenv-update]: https://github.com/charlesbjohnson/nodenv-update

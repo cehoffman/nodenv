@@ -20,6 +20,14 @@ create_executable() {
   assert_failure "nodenv: version \`2.0' is not installed (set by NODENV_VERSION environment variable)"
 }
 
+@test "fails with invalid version set from file" {
+  mkdir -p "$NODENV_TEST_DIR"
+  cd "$NODENV_TEST_DIR"
+  echo 1.9 > .node-version
+  run nodenv-exec npm
+  assert_failure "nodenv: version \`1.9' is not installed (set by $PWD/.node-version)"
+}
+
 @test "completes with names of executables" {
   export NODENV_VERSION="2.0"
   create_executable "node" "#!/bin/sh"
@@ -29,32 +37,20 @@ create_executable() {
   run nodenv-completions exec
   assert_success
   assert_output <<OUT
+--help
 node
 npm
 OUT
 }
 
-@test "supports hook path with spaces" {
-  hook_path="${NODENV_TEST_DIR}/custom stuff/nodenv hooks"
-  mkdir -p "${hook_path}/exec"
-  echo "export HELLO='from hook'" > "${hook_path}/exec/hello.bash"
-
-  export NODENV_VERSION=system
-  NODENV_HOOK_PATH="$hook_path" run nodenv-exec env
-  assert_success
-  assert_line "HELLO=from hook"
-}
-
 @test "carries original IFS within hooks" {
-  hook_path="${NODENV_TEST_DIR}/nodenv.d"
-  mkdir -p "${hook_path}/exec"
-  cat > "${hook_path}/exec/hello.bash" <<SH
+  create_hook exec hello.bash <<SH
 hellos=(\$(printf "hello\\tugly world\\nagain"))
 echo HELLO="\$(printf ":%s" "\${hellos[@]}")"
 SH
 
   export NODENV_VERSION=system
-  NODENV_HOOK_PATH="$hook_path" IFS=$' \t\n' run nodenv-exec env
+  IFS=$' \t\n' run nodenv-exec env
   assert_success
   assert_line "HELLO=:hello:ugly:world:again"
 }

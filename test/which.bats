@@ -56,6 +56,16 @@ create_executable() {
   assert_success "${NODENV_TEST_DIR}/bin/kill-all-humans"
 }
 
+@test "doesn't include current directory in PATH search" {
+  export PATH="$(path_without "kill-all-humans")"
+  mkdir -p "$NODENV_TEST_DIR"
+  cd "$NODENV_TEST_DIR"
+  touch kill-all-humans
+  chmod +x kill-all-humans
+  NODENV_VERSION=system run nodenv-which kill-all-humans
+  assert_failure "nodenv: kill-all-humans: command not found"
+}
+
 @test "version not installed" {
   create_executable "2.0" "npm"
   NODENV_VERSION=1.9 run nodenv-which npm
@@ -66,6 +76,12 @@ create_executable() {
   create_executable "1.8" "npm"
   NODENV_VERSION=1.8 run nodenv-which node
   assert_failure "nodenv: node: command not found"
+}
+
+@test "no executable found for system version" {
+  export PATH="$(path_without "mocha")"
+  NODENV_VERSION=system run nodenv-which mocha
+  assert_failure "nodenv: mocha: command not found"
 }
 
 @test "executable found in other versions" {
@@ -85,15 +101,13 @@ OUT
 }
 
 @test "carries original IFS within hooks" {
-  hook_path="${NODENV_TEST_DIR}/nodenv.d"
-  mkdir -p "${hook_path}/which"
-  cat > "${hook_path}/which/hello.bash" <<SH
+  create_hook which hello.bash <<SH
 hellos=(\$(printf "hello\\tugly world\\nagain"))
 echo HELLO="\$(printf ":%s" "\${hellos[@]}")"
 exit
 SH
 
-  NODENV_HOOK_PATH="$hook_path" IFS=$' \t\n' NODENV_VERSION=system run nodenv-which anything
+  IFS=$' \t\n' NODENV_VERSION=system run nodenv-which anything
   assert_success
   assert_output "HELLO=:hello:ugly:world:again"
 }

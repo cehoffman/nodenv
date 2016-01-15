@@ -4,8 +4,8 @@ load test_helper
 
 @test "blank invocation" {
   run nodenv
-  assert_success
-  assert [ "${lines[0]}" = "nodenv 0.4.0" ]
+  assert_failure
+  assert_line 0 "$(nodenv---version)"
 }
 
 @test "invalid command" {
@@ -70,6 +70,7 @@ load test_helper
 }
 
 @test "NODENV_HOOK_PATH includes nodenv built-in plugins" {
+  unset NODENV_HOOK_PATH
   run nodenv echo "NODENV_HOOK_PATH"
-  assert_success ":${NODENV_ROOT}/nodenv.d:${BATS_TEST_DIRNAME%/*}/nodenv.d:/usr/local/etc/nodenv.d:/etc/nodenv.d:/usr/lib/nodenv/hooks"
+  assert_success "${NODENV_ROOT}/nodenv.d:${BATS_TEST_DIRNAME%/*}/nodenv.d:/usr/local/etc/nodenv.d:/etc/nodenv.d:/usr/lib/nodenv/hooks"
 }
