@@ -173,13 +173,8 @@ easy to fork and contribute any changes back upstream.
 
     **Zsh note**: Modify your `~/.zshrc` file instead of `~/.bash_profile`.
 
-3. Add `nodenv init` to your shell to enable shims and autocompletion.
-
-    ~~~ sh
-    $ echo 'eval "$(nodenv init -)"' >> ~/.bash_profile
-    ~~~
-
-    _Same as in previous step, use `~/.bashrc` on Ubuntu, or `~/.zshrc` for Zsh._
+3. Run `~/.nodenv/bin/nodenv init` for shell-specific instructions on how to
+   initialize nodenv to enable shims and autocompletion.
 
 4. Restart your shell so that PATH changes take effect. (Opening a new
    terminal tab will usually do it.) Now check if nodenv was set up:
@@ -207,9 +202,8 @@ $ brew install nodenv
 **Note:** node-build is installed with nodenv by default. To skip
 node-build, pass `--without-node-build`.
 
-Afterwards you'll still need to add `eval "$(nodenv init -)"` to your
-profile as stated in the caveats. You'll only ever have to do this
-once.
+Afterwards you'll still need to run `nodenv init` for instructions
+as stated in the caveats. You'll only ever have to do this once.
 
 ### Upgrading
 
@@ -409,9 +403,11 @@ how it was set.
 
 Installs shims for all Node executables known to nodenv (i.e.,
 `~/.nodenv/versions/*/bin/*`). Run this command after you install a new
-version of Node, or install a gem that provides commands.
+version of Node, or install an npm package that provides an executable binary.
 
     $ nodenv rehash
+    
+_**note:** the [package-rehash plugin][package-rehash-plugin] automatically runs `nodenv rehash` whenever an npm package is installed globally_
 
 ### nodenv which
 
@@ -466,3 +462,4 @@ McKenzie](https://github.com/oinutter) and modified for node.
   [node-build]: https://github.com/nodenv/node-build#readme
   [hooks]: https://github.com/rbenv/rbenv/wiki/Authoring-plugins#rbenv-hooks
   [nodenv-update]: https://github.com/charlesbjohnson/nodenv-update
+  [package-rehash-plugin]: https://github.com/nodenv/nodenv-package-rehash
